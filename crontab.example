@@ -1,0 +1,9 @@
+# Crontab for AI Assets Hub crawlers — run every 6 hours, staggered by
+# a few minutes each so they don't all hit the DB/network at once.
+# Install with: crontab crontab.example  (after editing the path below)
+
+0 */6 * * * cd /var/www/aiassets && /usr/bin/npm run crawl:reddit >> logs/crawlers.log 2>&1
+5 */6 * * * cd /var/www/aiassets && /usr/bin/npm run crawl:github >> logs/crawlers.log 2>&1
+10 */6 * * * cd /var/www/aiassets && /usr/bin/npm run crawl:flowgpt >> logs/crawlers.log 2>&1
+15 */6 * * * cd /var/www/aiassets && /usr/bin/npm run crawl:huggingface >> logs/crawlers.log 2>&1
+20 */6 * * * cd /var/www/aiassets && /usr/bin/npm run crawl:producthunt >> logs/crawlers.log 2>&1
