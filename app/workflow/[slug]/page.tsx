@@ -4,6 +4,8 @@ import CopyButton from "@/components/CopyButton";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import VoteButton from "@/components/VoteButton";
+import { auth } from "@/auth";
 
 export const revalidate = 3600;
 
@@ -35,6 +37,8 @@ export default async function WorkflowPage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   const wf = await getWorkflow(slug);
   if (!wf) notFound();
+
+  const session = await auth();
 
   prisma.workflow.update({ where: { id: wf.id }, data: { views: { increment: 1 } } }).catch(() => {});
   const jsonString = JSON.stringify(wf.workflowJson, null, 2);
@@ -82,7 +86,12 @@ export default async function WorkflowPage({ params }: { params: Promise<{ slug:
         </div>
 
         <div className="mt-6 flex items-center gap-4 font-mono text-xs text-muted">
-          <span>▲ {wf.votes} votes</span>
+          <VoteButton
+            assetType="workflow"
+            assetId={wf.id}
+            initialVotes={wf.votes}
+            signedIn={!!session?.user}
+          />
           <span>{wf.views} views</span>
           {wf.sourceUrl && (
             <a href={wf.sourceUrl} target="_blank" rel="noopener noreferrer nofollow" className="text-amber hover:underline">

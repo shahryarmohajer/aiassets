@@ -42,10 +42,7 @@ export default async function HomePage() {
       <Header />
       <main className="mx-auto max-w-6xl px-4">
         {/* Hero */}
-        <section className="card-catalog pt-16 pb-10 -mx-4 px-4">
-          <p className="font-mono text-xs text-amber tracking-widest mb-3">
-            001 · A CATALOG OF PRACTICAL AI ASSETS
-          </p>
+        <section className="pt-16 pb-10 -mx-4 px-4">
           <h1 className="font-sans text-3xl sm:text-5xl font-semibold text-paper max-w-2xl leading-tight">
             Find the prompt, workflow, or free credit you're looking for — instantly.
           </h1>

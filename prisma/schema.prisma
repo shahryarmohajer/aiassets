@@ -99,6 +99,7 @@ model Prompt {
 
   tags           PromptTag[]
   favorites      Favorite[]
+  voteRecords    Vote[]
 
   /// tsvector generated column, maintained by trigger (see migration.sql)
   searchVector   Unsupported("tsvector")? @map("search_vector")
@@ -146,6 +147,7 @@ model Workflow {
 
   tags         WorkflowTag[]
   favorites    Favorite[]
+  voteRecords  Vote[]
 
   searchVector Unsupported("tsvector")? @map("search_vector")
 
@@ -246,12 +248,14 @@ model User {
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
   image         String?
+  passwordHash  String?   @map("password_hash") // set only for email/password accounts; null for OAuth-only users
   role          String    @default("user") // "user" | "admin"
   createdAt     DateTime  @default(now()) @map("created_at")
 
   accounts      Account[]
   sessions      Session[]
   favorites     Favorite[]
+  votes         Vote[]
   followedCategories UserCategoryFollow[]
 
   // premium placeholder — inert while VIP_ENABLED=false
@@ -297,6 +301,24 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+model Vote {
+  id       String @id @default(cuid())
+  userId   String @map("user_id")
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  promptId   String?   @map("prompt_id")
+  prompt     Prompt?   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  workflowId String?   @map("workflow_id")
+  workflow   Workflow? @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // one vote per user per asset
+  @@unique([userId, promptId])
+  @@unique([userId, workflowId])
+  @@map("votes")
 }
 
 model Favorite {

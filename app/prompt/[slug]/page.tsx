@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import CopyButton from "@/components/CopyButton";
+import VoteButton from "@/components/VoteButton";
+import { auth } from "@/auth";
 
 export const revalidate = 3600;
 
@@ -49,6 +51,8 @@ export default async function PromptPage({
   const { slug } = await params;
   const prompt = await getPrompt(slug);
   if (!prompt) notFound();
+
+  const session = await auth();
 
   // fire-and-forget view increment
   prisma.prompt.update({ where: { id: prompt.id }, data: { views: { increment: 1 } } }).catch(() => {});
@@ -97,7 +101,12 @@ export default async function PromptPage({
         </div>
 
         <div className="mt-6 flex items-center gap-4 font-mono text-xs text-muted">
-          <span>▲ {prompt.votes} votes</span>
+          <VoteButton
+            assetType="prompt"
+            assetId={prompt.id}
+            initialVotes={prompt.votes}
+            signedIn={!!session?.user}
+          />
           <span>{prompt.views} views</span>
           {prompt.sourceUrl && (
             <a href={prompt.sourceUrl} target="_blank" rel="noopener noreferrer nofollow" className="text-amber hover:underline">

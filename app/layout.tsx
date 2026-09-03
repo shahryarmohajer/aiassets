@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const SITE_NAME = "AI Assets Hub";
+const SITE_NAME = "ai-assets";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
 const SITE_DESCRIPTION =
   "Search engine for AI prompts, n8n & Make.com workflows, Cursor rules, MCP servers, and free AI credits.";
